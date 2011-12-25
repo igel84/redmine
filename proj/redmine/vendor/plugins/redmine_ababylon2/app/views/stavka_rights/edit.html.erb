@@ -1,0 +1,35 @@
+<script>
+  function pause(n){
+    today=new Date()
+    today2=today
+    while((today2-today)<=n){
+      today2=new Date()
+    }
+  }
+
+</script>
+
+<div class="box tabular">
+  <% form_tag  url_for(:controller => 'stavka_rights', :action => "update", :user_id => @user.id),  :method => "post",  :name => 'edit_srights_form' , :id => 'idfrm', :class=>'loginform' do %>
+
+    <% @users.each do |user| %>
+      <% s_right = user.get_access_rights_for_stavka_of(@user) %>
+      <p>
+        <label for="user_s_right"><%= user.firstname + " " + user.lastname %></label>
+        <% options = [ [l(:none), 0],[l(:read), 1],[l(:edit), 2] ]  %>
+        <%    selected_option =   s_right  %>
+        <%=  select_tag( :report_id, options_for_select(options, selected_option),:name=>"sright[#{user.id}]" )%>
+      </p>
+    <% end %>
+    <br>
+    <p>
+      <input value="<%=l(:srights_update)%>" onclick="document.edit_srights_form.submit();//opener.location.reload();//self.close();" type="button">
+      <input value="<%=l(:cancel)%>" onclick="self.close();" type="button">
+    </p>
+  <% end %>
+
+
+</div>
+
+
+

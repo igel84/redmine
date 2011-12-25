@@ -1,0 +1,24 @@
+<div  id="ajax_messages"></div>
+
+<h2><%=l(:label_project_new)%></h2>
+
+<% labelled_tabular_form_for :project, @project, :url => { :action => "create" } do |f| %>
+<%= render :partial => 'form', :locals => { :f => f } %>
+<%= submit_tag l(:button_save) %>
+<%= javascript_tag "Form.Element.focus('project_name');" %>
+<% end %>
+
+
+<%= render :partial=>"calendar/calendar_settings", :locals => { :calendar_type => 'ajax' , :with_time => false } %>
+
+<% form_remote_tag( :url =>{ :action => 'set_new_babylon2_field', :field => 'start_pr_date', :id=>"new" }, :html => { :name => 'calendar_form_fromtime'}) do %>
+  <div id="set_calendar_from">
+    <%= render :partial=>"calendar/calendar", :locals => { :calendar_type => 'ajax',:clear_time => true, :form_name => 'calendar_form_fromtime', :time_obj => session[:start_pr_date], :hidden => true, :field => 'start_pr_date', :clear_action=>'set_new_babylon2_field' } %>
+  </div>
+<% end %>
+<% form_remote_tag( :url =>{ :action => 'set_new_babylon2_field', :id=>"new" ,  :field => 'end_pr_date' }, :html => { :name => 'calendar_form_totime'}) do %>
+  <div id="set_calendar_to">
+  <%= render :partial=>"calendar/calendar", :locals => { :calendar_type => 'ajax',:clear_time => true, :form_name => 'calendar_form_totime', :time_obj => session[:end_pr_date], :hidden => true, :field => 'end_pr_date', :clear_action=>'set_new_babylon2_field' } %>
+  </div>
+<% end %>
+<div id="test_lsx"></div>

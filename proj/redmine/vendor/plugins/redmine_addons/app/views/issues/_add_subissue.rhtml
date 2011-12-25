@@ -1,0 +1,80 @@
+<style type="text/css">
+		#dialog { display: none; }
+        .tabular label { width: 100px; margin-left: -95px; }
+        .tabular p { padding-left: 75px; }
+        .ui-button { outline: 0; margin:0; padding: .4em 1em .5em; text-decoration:none; cursor:pointer; position: relative; text-align: center; }
+		.ui-dialog .ui-state-highlight, .ui-dialog .ui-state-error { padding: .3em;  }
+</style>
+<script type="text/javascript">
+	$j(function() {
+		$j("#dialog").dialog({
+			bgiframe: true,
+			autoOpen: false,
+			width: 550,
+            height: 570,
+			modal: true,
+			buttons: {
+				'<%= l(:button_add) %>': function() {
+
+                    $j('#add_subissue_form').submit();
+					$j(this).dialog('close');
+          
+				},
+				'<%= l(:button_cancel) %>': function() {
+					$j(this).dialog('close');
+				}
+			},
+			close: function() {
+				
+			}
+		});
+
+	});
+</script>
+<div id="dialog" title="<%= l :label_add_subissue %>">
+  <% form_tag({:action => 'copy_subissue'}, :id => 'add_subissue_form') do %>
+    <%= hidden_field_tag('ids[]', @issue.id) %><%= hidden_field_tag("copy_options[copy]", "1") %>
+
+    <div class="box tabular">
+      <p><label for="new_project_id"><%=l(:field_project)%>:</label>
+      <% projects_options = self.respond_to?(:project_tree_options_for_select) ? project_tree_options_for_select(@allowed_projects, :selected => @target_project) : options_from_collection_for_select(@allowed_projects, 'id', 'name', @target_project.id) %>
+      <%= select_tag "new_project_id",
+                     projects_options %></p>
+
+      <p><label for="new_tracker_id"><%=l(:field_tracker)%>:</label>
+      <%= select_tag "new_tracker_id", "<option value=\"\">#{l(:label_no_change_option)}</option>" + options_from_collection_for_select(@trackers, "id", "name") %></p>
+
+      <p><label for="new_subject"><%=l(:field_subject)%>:</label>
+      <%= text_field_tag "new_subject", @issue.subject, :size => 50 %></p>
+
+      <% statuses = IssueStatus.all %>
+      <p><label for="new_status_id"><%=l(:field_status)%>:</label>
+      <%= select_tag "new_status_id", options_from_collection_for_select(statuses, "id", "name", @issue.status_id) %></p>
+
+      <% priorities = IssuePriority.all %>
+      <p><label for="new_priority_id"><%=l(:field_priority)%>:</label>
+      <%= select_tag "new_priority_id", options_from_collection_for_select(priorities, "id", "name", @issue.priority_id) %></p>
+
+      <p><label for="new_assigned_to_id"><%=l(:field_assigned_to)%>:</label>
+       <%= select_tag "new_assigned_to_id",  "<option value=\"\"></option>" + options_from_collection_for_select(@issue.assignable_users, "id", "name", @issue.author_id) %></p>
+
+      <p><label for="new_auditor_id"><%=l(:field_auditor)%>:</label>
+       <%= select_tag "new_auditor_id", "<option value=\"\"></option>" + options_from_collection_for_select(User.active.uniq.sort, "id", "name", @issue.author_id) %></p>
+
+      <p><label for="new_start_date" style="width:auto;margin-left:-75px;"><%=l(:field_start_date)%>:</label><br>
+      <%= text_field_tag "new_start_date", @issue.start_date, :size => 50 %><%= calendar_for('new_start_date') %></p>
+
+      <p><label for="new_due_date" style="width:auto;margin-left:-75px;"><%=l(:field_due_date)%>:</label><br>
+      <%= text_field_tag "new_due_date", @issue.due_date, :size => 50 %><%= calendar_for('new_due_date') %></p>
+
+      <p><label for="new_description"><%=l(:field_description)%>:</label>
+      <%= text_area_tag "new_description", @issue.description, :size => '50x6' %></p>
+    </div>
+
+    <% submit_tag l(:button_add) %>
+  <% end %>
+</div>
+
+<div class="contextual">
+  <%= link_to_if_authorized(l(:button_add), {:controller => 'issues', :action => 'copy_subissue', :id => @issue }, :onclick => '$j("#dialog").dialog("open"); return false;', :class => 'icon icon-add') %>
+</div>

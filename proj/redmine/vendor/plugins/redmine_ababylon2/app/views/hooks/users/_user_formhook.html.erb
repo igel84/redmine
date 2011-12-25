@@ -1,0 +1,27 @@
+<%#= project.id %>
+
+ 
+<% right = User.current.get_access_rights_for_stavka_of(@user) %>
+
+<%  if right==2 %>
+  <script language="JavaScript">
+    <!--
+    function openChild(file,window) {
+      childWidth = 695
+      childHeigth = 400
+      leftVal = (screen.width - childWidth) / 2;
+      topVal = (screen.height - childHeigth ) / 2;
+      childWindow=open(file,window,'resizable=no,width='+childWidth+',height='+childHeigth+',left='+leftVal+',top='+topVal);
+      if (childWindow.opener == null) childWindow.opener = self;
+    }
+    //-->
+  </script>
+  <p>
+    <%= form.text_field :stavka, :size=>3 %>
+    <a href="#" onclick="openChild('/stavka_rights/edit?user_id='+<%=@user.id%>,'win3')"><%=l(:edit_stavka_permissions)%></a>
+  </p>
+<%  elsif right==1 %>
+  <p><label for="project_stavks"><%=l(:field_stavka)%></label>
+    <span id="stavka"><%= @user.stavka %> </span>
+  </p>
+<%  end %>

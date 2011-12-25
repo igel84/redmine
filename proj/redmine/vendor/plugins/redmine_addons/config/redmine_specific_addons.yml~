@@ -1,0 +1,22 @@
+jabber:
+  debug: false
+  login: redmine@forbet.net
+  password: secret
+
+# идентификаторы треков задач из базы данных редмайна
+tracker_ids:
+  idea: 1   # "идея"
+  task: 2   # "задача"
+  error: 3  # "ошибка"
+
+# идентификаторы статусов задач из базы данный редмайна
+status_ids:
+  new: 1            # "новая"
+  analysis: 8       # "анализ"
+  implementation: 9 # "реализация"
+  in_progress: 10    # "в работе"
+  audit: 11          # "аудит"
+  install: 12        # "установка"
+  testing: 13        # "в тесте"
+  closed: 14         # "закрыта"
+  rejected: 15       # "отклонена"

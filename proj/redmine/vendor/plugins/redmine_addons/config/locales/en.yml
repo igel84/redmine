@@ -1,0 +1,28 @@
+# English strings go here for Rails i18n
+en:
+  project_settings_tab_label: "Redmine Specific Addons"
+  project_settings_reload_message: "If you made changes at members tab, reload this page please"
+  project_settings_setup_needed_message: "For correct running of Redmine Specific Addons, please, specify roles"
+  default_product_manager: Default Product Manager
+  default_project_manager: Default Project Manager
+  field_jabber: Jabber
+  kick_button_label: Kick
+  reject_button_label: Reject
+  accept_button_label: Accept
+  cannot_time_manager: You cannot manage time entries
+  field_done_date: Done date
+  label_auditor: Auditor
+  field_auditor: Auditor
+  field_auditor_id: Auditor
+  
+  activerecord:
+    errors:
+      models:
+        issue:
+          attributes:
+            done_date:
+              too_soon_done_date: Done date should not be before start date
+            done_ratio:
+              status_not_in_progress: Not able to set done ratio to 100% until status is not "in progress"
+              no_time_entry: "Spent time, Activity and Comment should be specified"
+              invalid_status: "Cannot change status until done ration is 100%"

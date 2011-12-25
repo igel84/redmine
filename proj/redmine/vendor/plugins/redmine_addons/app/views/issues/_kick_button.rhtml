@@ -1,0 +1,4 @@
+<%= link_to t('kick_button_label'), { :controller => 'issues', :action => 'edit', :id => @issue },
+            :class => 'icon icon-kick', :style => 'margin-right:25px',
+            :onclick => "RejectAcceptButtons.performKick(); return false;"
+%>

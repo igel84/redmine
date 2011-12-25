@@ -1,0 +1,21 @@
+
+<p><%= form.check_box :is_pr_closed %></p>
+
+<p><label for="project_start_date"><%= l(:form_project_start_date) %></label>
+  <span id="start_date_in_f">
+    <%= render :partial=>"calendar/calendar", :locals => { :calendar_type => 'ajax',:clear_time => true, :form_name => 'calendar_form_fromtime', :time_obj => (@project && @project.id ? @project.start_pr_date: session[:start_pr_date]), :time=>false, :hidden => false, :clear_text=>"Auto:" + @project.get_start_date_str, :field => 'start_pr_date', :clear_action=>'set_babylon2_field' } %>
+  </span>
+</p>
+
+<p><label for="project_end_date"><%= l(:form_project_end_date) %></label>
+  <span id="end_date_in_f">
+    <%= render :partial=>"calendar/calendar", :locals => { :calendar_type => 'ajax',:clear_time => true, :form_name => 'calendar_form_totime', :time_obj => (@project && @project.id ? @project.end_pr_date: session[:end_pr_date]), :time=>false, :clear_text=>"Auto:" + @project.get_end_date_str, :field => 'end_pr_date', :clear_action=>'set_babylon2_field' } %>
+  </span>
+</p>
+
+
+<%  unless @project && @project.id %>
+  <div id="new_project_dates">
+     <%=  render :partial=>"projects/new_project_dates" %>
+  </div>
+<%  end %>

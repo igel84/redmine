@@ -1,0 +1,91 @@
+<% sel_options = sel_options || @query.columns.map{|col| col.name} %>
+<style>
+  .tbR {
+    border: 6px solid white;
+    table-layout: fixed;
+  }
+  .tbR .tdResize {
+    cursor: w-resize;
+    cursor: col-resize;
+    background-color: #FFD47F;
+    width: 1px;
+  }
+  .tabHead {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tbR td {
+    border: 1px solid darkred;
+  }
+  .tbR td .tabContent {
+    color: #999;
+    overflow: hidden;
+  }
+</style>
+
+
+<style>
+  .tbR{border:6px solid white;width:350px;table-layout:fixed;}
+  .tbR .tdResize{cursor:w-resize;cursor:col-resize;background-color:#FFD47F;width:1px;width=4px}
+  .tabHead{overflow:hidden;text-overflow:ellipsis;}
+  .tbR td{border:1px solid darkred;}
+  .tbR td .tabContent{color:#999;overflow:hidden;}
+  .pt3{float:right;display:none;border-collapse:collapse;border:0px}
+</style>
+
+<% def_widths = sel_options.map{|o| o.to_s}.sort != @col_sizes.keys.sort %>
+
+
+  <table class="tbR"  id="table_col_resize"  name="table_col_resize" cellspacing=3>
+    <tr>
+      <% i=0 %>
+      <% sel_options.each do |column| %>
+        <% i+=1 %>
+        <td id="tdTb<%=i%>" <%= "style=\"width:#{@col_sizes[column.to_s]}px\"" unless def_widths%>  bgcolor="#E1EFF2">
+          <div id="divTdTb<%=i%>" class="tabHead"><span><%=l("field_#{column.to_s}")%></span></div>
+        </td>
+        <td id="tdResize<%=i%>" class="tdResize" width=2 ></td>
+      <% end %>
+    </tr>
+    <tr>
+
+      <% (1..sel_options.count).each do |i| %>
+        <td class="tdContent"> <div class="tabContent">&nbsp;</div> </td>
+  <%# if sel_options.count != i %><td class="tdResize"></td><% # end %>
+      <% end  %>
+    </tr>
+  </table>
+
+
+<%(1..sel_options.count).each do |i|%>
+  <input type="hidden" id="lab_td_width<%=i%>" value="000">
+<% end %>
+
+
+
+
+<script>
+  var DefMinWidth = 180;
+  col_count = (document.getElementById('table_col_resize').rows[0].cells.length +1)/2;
+  def_col_width = Math.max(DefMinWidth, Math.round(screen.width*0.69/col_count) - col_count*2);
+  //alert('DKW:'+ def_col_width + ' total ' + col_count*def_col_width);
+<% if  def_widths %>
+    for (var i=1; i<=col_count; i++) {
+      document.getElementById('tdTb'+i).style.width=def_col_width+"px";
+    }
+<% else %>
+  <% i=0 %>
+  <% sel_options.each do |column| %>
+    <% i+=1 %>
+      document.getElementById('tdTb'+<%=i%>).style.width="<%=@col_sizes[column.to_s]%>px";
+  <% end %>
+<% end %> 
+</script>
+
+<script>
+  for (var i=1; i<=col_count; i++) {
+    document.getElementById('lab_td_width'+i).value = document.getElementById('tdTb'+i).style.width;
+  }
+</script>
+
+

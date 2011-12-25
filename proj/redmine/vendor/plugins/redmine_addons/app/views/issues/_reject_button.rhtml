@@ -1,0 +1,10 @@
+<% if @issue.status_id == RedmineAddons::Config.settings['status_ids']['rejected'] %>
+  <span class="icon icon-reject" style="margin-right:25px">
+    <%= t('reject_button_label') %>
+  </span>
+<% else %>
+  <%= link_to t('reject_button_label'), { :controller => 'issues', :action => 'edit', :id => @issue },
+              :class => 'icon icon-reject', :style => 'margin-right:25px',
+              :onclick => "RejectAcceptButtons.performReject(); return false;"
+  %>
+<% end %>

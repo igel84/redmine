@@ -1,0 +1,22 @@
+jabber:
+  debug: false
+  login: cifronomika@jabber.ru
+  password: cifronomikatest
+
+# идентификаторы треков задач из базы данных редмайна
+tracker_ids:
+  idea: 1   # "идея"
+  task: 2   # "задача"
+  error: 3  # "ошибка"
+
+# идентификаторы статусов задач из базы данный редмайна
+status_ids:
+  new: 1            # "новая"
+  analysis: 2       # "анализ"
+  implementation: 3 # "реализация"
+  in_progress: 4    # "в работе"
+  audit: 5          # "аудит"
+  install: 6        # "установка"
+  testing: 7        # "в тесте"
+  closed: 8         # "закрыта"
+  rejected: 9       # "отклонена"

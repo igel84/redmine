@@ -1,0 +1,20 @@
+<div class="contextual">
+  <%= javascript_include_tag 'reject_accept_buttons', :plugin => 'redmine_addons' %>
+  <%= stylesheet_link_tag 'icons', :plugin => 'redmine_addons' %>
+
+  <% if @issue.assigned_to.present? %>
+    <%= render :partial => 'kick_button' %>
+  <% end %>
+
+  <% if authorize_for(params[:controller], 'update') %>        
+    <%= render :partial => 'accept_button' %>
+    <%= render :partial => 'reject_button' %>
+  <% end %>
+
+  <% if Rails.env == 'development' %>
+    <%= link_to_if_authorized(l(:button_update), {:controller => 'issues', :action => 'edit', :id => @issue }, :onclick => 'showAndScrollTo("update", "notes"); return false;', :class => 'icon icon-edit', :accesskey => accesskey(:edit)) %>
+  <% end %>
+    
+  <%= link_to_if_authorized l(:button_move), {:controller => 'issue_moves', :action => 'new', :id => @issue}, :class => 'icon icon-move' %>
+  <%= link_to_if_authorized l(:button_delete), {:controller => 'issues', :action => 'destroy', :id => @issue}, :confirm => issues_destroy_confirmation_message(@issue), :method => :post, :class => 'icon icon-del' %>
+</div>

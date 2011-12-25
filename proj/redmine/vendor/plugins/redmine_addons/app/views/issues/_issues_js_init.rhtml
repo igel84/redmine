@@ -1,0 +1,32 @@
+<% include_calendar_headers_tags %>
+
+<%= javascript_include_tag 'generic_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'done_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'estimated_time_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'start_date_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'due_date_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'status_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'priority_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'assigned_field', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'item', :plugin => 'redmine_addons' %>
+<%= stylesheet_link_tag 'list_edit', :plugin => 'redmine_addons' %>
+<%= javascript_include_tag 'list_edit', :plugin => 'redmine_addons' %>
+
+<script type="text/javascript">
+  window.IN_PROGRESS_STATUS_ID = '<%= IssueStatus.find_by_id(RedmineAddons::Config.settings["status_ids"]["in_progress"]).position %>';
+  window.BACK_URL = '<%= url_for(params) %>';
+  attachListEditInitHandler();
+function selectAllOptions(id)
+{
+  var select = $(id);
+  for (var i=0; i<select.options.length; i++) {
+    select.options[i].selected = true;
+  }
+}
+
+
+  function submit_query_form(id) {
+    selectAllOptions("selected_columns");
+    $(id).submit();
+  }
+</script>

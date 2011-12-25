@@ -1,0 +1,43 @@
+<!--
+<script language="javascript" type="text/javascript" src="/calendar/calendar.js"></script>
+<link type="text/css" media="screen" rel="stylesheet" href="/calendar/calendar.css">
+  -->
+<script type="text/javascript">
+	var d= new Date();
+        var myCalendarModel = new DHTMLSuite.calendarModel({initialYear: d.getFullYear(), initialMonth: d.getMonth(), initialDay: d.getDate() }); // init Today
+	myCalendarModel.setLanguageCode('ru');
+        //myCalendarModel.addInvalidDateRange({year: d.getFullYear() ,month: d.getMonth()+1,day: d.getDate()},false); //invalid after  today
+        //myCalendarModel.addInvalidDateRange(false,{year: d.getFullYear() ,month: d.getMonth()+1,day: d.getDate()});    //invalid before tomorrow
+        // myCalendarModel.addInvalidDateRange(false,{year: <%= 1.days.ago.year %> ,month: <%= 1.days.ago.month %>,day: <%= 1.days.ago.mday %>});    //invalid before today
+	var calendarObjForForm = new DHTMLSuite.calendar({minuteDropDownInterval:10,numberOfRowsInHourDropDown:8,callbackFunctionOnDayClick:'getDateFromCalendar',isDragable:false,displayTimeBar:<%=( with_time ? 'true' : 'false' )%>}); 
+	calendarObjForForm.setCalendarModelReference(myCalendarModel);
+	
+	
+	function pickDate(buttonObj, formObject, inputObject){
+		calendarObjForForm.setCalendarPositionByHTMLElement(buttonObj,-45,buttonObj.offsetHeight+2);
+                if (<%=  with_time %>){
+                    calendarObjForForm.setInitialDateFromInput(inputObject,'yyyy-mm-dd hh:ii');
+                }else{
+                    calendarObjForForm.setInitialDateFromInput(inputObject,'yyyy-mm-dd');    
+                }
+		calendarObjForForm.addHtmlElementReference('inputDateObject',inputObject);
+                calendarObjForForm.addHtmlElementReference('formObject',formObject);
+		if(calendarObjForForm.isVisible()){
+			calendarObjForForm.hide();
+		}else{
+			calendarObjForForm.resetViewDisplayedMonth();
+			calendarObjForForm.display();
+		}		
+	}	
+
+	function getDateFromCalendar(inputArray){
+		var references = calendarObjForForm.getHtmlElementReferences();
+		 references.inputDateObject.value = inputArray.year + '-' + inputArray.month + '-' + inputArray.day + '-' + inputArray.hour + ':' + inputArray.minute;
+		calendarObjForForm.hide();	
+                if ( <%= calendar_type == 'ajax'  %> ){
+                  var form = references.formObject;
+                  if( form.onsubmit() ){ form.submit(); }
+                }
+	}	
+</script>
+

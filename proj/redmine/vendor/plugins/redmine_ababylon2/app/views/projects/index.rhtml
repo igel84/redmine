@@ -1,0 +1,99 @@
+<div class="contextual">
+  <% if authorize_global_implemented %>
+    <%= link_to(l(:label_project_new), {:controller => 'projects', :action => 'new'}, :class => 'icon icon-add') + ' |' if User.current.allowed_to?(:add_project, nil, :global => true) %>
+  <% else %>
+    <%= link_to(l(:label_project_new), {:controller => 'projects', :action => 'new'}, :class => 'icon icon-add') + ' |' if User.current.admin? %>
+  <% end %>
+  <%= link_to l(:label_issue_view_all), { :controller => 'issues' } %> |
+  <%= link_to l(:label_overall_activity), { :controller => 'projects', :action => 'activity' }%>
+</div>
+
+<h2><%=l(:label_project_plural)%></h2>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th><%=l(:label_project)%></th>
+      <th><%=l(:field_description)%></th>
+      <th><%=l(:field_project_start_date)%></th>
+      <th><%=l(:field_project_end_date)%></th>
+      <th><%=l(:field_project_readiness)%></th>
+      <th><%=l(:field_project_is_closed)%></th>
+      <th><%=l(:field_project_project_manager)%></th>
+      <th><%=l(:field_project_product_manager)%></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% ancestors = [] %>
+    <% for project in @projects %>
+      <% rowid = "" %>
+      <% classes = "" %>
+      <% spanicon = "" %>
+      <% openonclick = "" %>
+      <% if(!project.children.empty?) %>
+        <% classes += " closed parent " + cycle("odd", "even") %>
+        <% rowid = "id=\""+project.id.to_s+"span\"" %>
+        <% openonclick = "onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
+        <% spanicon = "<span " + openonclick + " class=\"expander\">&nbsp  </span>" %>
+      <% else %>
+        <% classes += " child" %>
+      <% end %>
+      <% if(project.parent_id == nil) %>
+        <% ancestors.clear %>
+        <% ancestors << project.id %>
+      <% else %>
+        <% while (ancestors.any? && !(project.parent_id == ancestors.last)) %>
+          <% ancestors.pop %>
+        <% end %>
+        <% classes += " hide" %>
+        <% if( !(ancestors.detect {|pid| pid == project.parent_id })) %>
+          <% prvclasses = "closed show parent " + cycle("odd", "even") %>
+          <% ancestors.each do |pid| %>
+            <% prvclasses += " " + pid.to_s %>
+          <% end %>
+          <% openonclick = "onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
+          <tr class="<%= prvclasses %>" id="<%= project.parent_id.to_s + "span" %>" >
+            <td class="name" ><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%="<span " + openonclick + " class=\"expander\" >&nbsp </span>" %><%= h("<Private Project>") %><span <%= openonclick %> class="empty">&nbsp</span></td>
+            <td <%= openonclick %> >Project is private. </td>
+            </span>
+          </tr>
+          <% ancestors << project.parent_id %>
+        <% end %>
+        <% ancestors.each do |pid| %>
+          <% classes += " " + pid.to_s %>
+        <% end %>
+        <% ancestors << project.id %>
+      <% end %>
+      <tr class="<%= classes %>" <%= rowid %> >
+        <td class="name">
+          <%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%= spanicon %>
+          <%= project.active? ? link_to(h(project.name), project_path(project)+'/issues', :class => "project") : h(project.name) %>
+  <%#lsx#orig#= project.active? ? link_to(h(project.name), {:controller => 'projects', :action => 'show', :id => project}, :class => "project") : h(project.name) %>
+          <span <%= openonclick %> class="empty <%=User.current.member_of?(project) ? 'my-project' : nil%>">&nbsp</span>
+        </td>
+        <td
+          <%= openonclick %> ><%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %>
+        </td>
+        <td> <%=project.get_start_date_str%></td>
+        <td> <%= project.get_end_date_str %></td>
+        <td><%=lsx_progress_bar(rediness_percent(project).to_i, :width => '80px')%> <%#= link_to_project(project, {:action => 'settings'}, :title => project.short_description) %> </td>
+        <td> <%= project.is_pr_closed && project.is_pr_closed ==1 ? l(:field_project_closed) : l(:field_project_open) %></td>
+        <td> <% project_manager = User.find(project.default_project_manager_id) if project.default_project_manager_id %>  <%= link_to_user project_manager if project_manager%> </td>
+        <td> <% product_manager = User.find(project.default_product_manager_id) if project.default_product_manager_id %>  <%= link_to_user product_manager if product_manager%> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if User.current.logged? %>
+  <p style="text-align:right;">
+    <span class="my-project"><%= l(:label_my_projects) %></span>
+  </p>
+<% end %>
+
+<% other_formats_links do |f| %>
+  <%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
+<% end %>
+
+<% html_title(l(:label_project_plural)) -%>
+

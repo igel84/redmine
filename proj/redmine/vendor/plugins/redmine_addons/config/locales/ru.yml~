@@ -1,0 +1,32 @@
+# Russian strings go here for Rails i18n
+ru:
+  project_settings_tab_label: "Redmine Specific Addons"
+  project_settings_reload_message: "Если вы сделали изменения на вкладке \"Участники\", обновите эту страницу"
+  project_settings_setup_needed_message: "Чтобы плагин Redmine Specific Addons работал корректно, пожалуйста, укажите менеджеров"
+  default_product_manager: менеджер продукта
+  default_project_manager: менеджер проекта
+  field_jabber: Jabber
+  kick_button_label: Пнуть
+  reject_button_label: Отклонить
+  accept_button_label: Принять
+  cannot_time_manager: Вы не можете управлять логом времени
+  field_done_date: Фактическая дата выполнения
+  field_start_date: Плановая <br>дата начала
+  field_due_date: Плановая <br>дата выполнения
+  label_auditor: Аудитор
+  field_auditor: Аудитор
+  field_auditor_id: Аудитор
+  field_accept_date: Принято в работу
+  field_estimated_hours: Трудозатраты
+
+  activerecord:
+    errors:
+      models:
+        issue:
+          attributes:
+            done_date:
+              too_soon_done_date: Фактическая дата выполнения не может быть раньше даты начала
+            done_ratio:
+              status_not_in_progress: "Нельзя указать прогресс 100%, пока задача не имеет статуса в работе"
+              no_time_entry: Укажите деятельность и потраченное время
+              invalid_status: Нельзя изменить статус, пока не указан прогресс 100%

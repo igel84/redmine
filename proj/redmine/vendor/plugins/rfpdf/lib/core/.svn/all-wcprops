@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/7806/trunk/vendor/plugins/rfpdf/lib/core
+END
+rmagick.rb
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/7806/trunk/vendor/plugins/rfpdf/lib/core/rmagick.rb
+END
+rfpdf.rb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/5247/trunk/vendor/plugins/rfpdf/lib/core/rfpdf.rb
+END
+image_science.rb
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/5247/trunk/vendor/plugins/rfpdf/lib/core/image_science.rb
+END

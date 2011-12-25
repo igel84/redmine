@@ -1,0 +1,165 @@
+<% form_tag  url_for(:controller => 'table_options', :action => "update", :user_id => 1),  :method => "get",  :name => 'edit_options_form' , :id => 'options_form' do %>
+
+  <div style="overflow: visible;">
+    <table style="">
+      <tbody><tr>
+          <td><%= l(:field_column_names) %></td>
+          <td>
+            <table style="border-collapse: collapse; border:0;">
+              <tr>
+                <td style="padding-left:0">
+                  <%= select_tag 'available_columns',
+                    options_for_select((@query.available_columns - @query.columns).collect {|column| [column.caption.gsub(/\<(\w+)\>/,''), column.name]}),
+                    :multiple => true, :size => 10, :style => "width:150px"  %>
+                </td>
+                <td align="center" valign="middle">
+                  <!--<input type="button" value="&#8594;"  onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" /><br />-->
+                  <input type="button" value="&#8594;" onclick="moveOptions(this.form.available_columns, this.form.selected_columns);sendAjax();" /><br />
+                  <input type="button" value="&#8592;" onclick="moveOptions(this.form.selected_columns,  this.form.available_columns);sendAjax();" />
+                </td>
+                <td>
+                  <%= select_tag 'c[]',
+                    options_for_select(@query.columns.collect {|column| [column.caption.gsub(/\<(\w+)\>/,''), column.name]}),
+                    :id => 'selected_columns', :multiple => true, :size => 10, :style => "width:150px" %>
+                </td>
+                <td align="center" valign="middle">
+                  <input type="button" value="&#8593;" onclick="moveOptionUp(this.form.selected_columns);sendAjax();" /><br />
+                  <input type="button" value="&#8595;" onclick="moveOptionDown(this.form.selected_columns);sendAjax();" />
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td><%= l(:field_group_by) %></td>
+          <td><%= select_tag('group_by', options_for_select([[]] + @query.groupable_columns.collect {|c| [c.caption, c.name.to_s]}, @query.group_by)) %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p align="center">
+    <input value="<%=l(:srights_update)%>" onclick="submit_query_form();//pause(3000);opener.location.reload();//self.close();" type="button">
+    <input value="<%=l(:cancel)%>" onclick="self.close();" type="button">
+  </p>
+<% end %>
+
+
+
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'select_list_move' %>
+<% end %>
+
+<script type="text/javascript">
+
+  function add_element_to_form(form_id, type, name, value) {
+   var element = document.createElement("input");
+    element.setAttribute("type", type);
+    element.setAttribute("value", value);
+    element.setAttribute("name", name);
+    var form = document.getElementById(form_id);
+    form.appendChild(element);
+  }
+
+  function sendAjax(){
+    var select = $("selected_columns");
+    sel_options = "";
+    for (var i=0; i<select.options.length; i++) {
+      sel_options = sel_options + " _AND_ " + select.options[i].value;
+    }
+   <%=remote_function(:url=>{:action=>:change_cols_number}, :with=>"'sel_options=' + sel_options" )%>;
+  }
+
+  function pause(n){
+    today=new Date()
+    today2=today
+    while((today2-today)<=n){
+      today2=new Date()
+    }
+  }
+
+
+  function selectAllOptions(id)
+  {
+    var select = $(id);
+    for (var i=0; i<select.options.length; i++) {
+      select.options[i].selected = true;
+    }
+  }
+
+
+  function submit_query_form() {
+    selectAllOptions("selected_columns");
+    col_count = (document.getElementById('table_col_resize').rows[0].cells.length +1)/2;
+    for (var i=1; i<=col_count; i++) {
+      add_element_to_form("options_form", "hidden", 'td_width'+i, document.getElementById('lab_td_width'+i).value);
+    }
+    document.edit_options_form.submit();
+  }
+
+</script>
+
+
+
+<div id="resize_table">
+  <%= render :partial =>'table_cols_resize' %>
+</div>
+
+
+<% sel_options = sel_options || @query.columns.map{|col| col.name} %>
+
+<script>
+  var minWidth = 130;
+  d = document;
+  g = function(a) {
+    return d.getElementById(a);
+  }
+  var FF = d.all == null;
+  var mDown = 0; //script options
+  var posX;      //script var
+  onload = function() {
+    col_count = (document.getElementById('table_col_resize').rows[0].cells.length +1)/2;
+    tdTab = [];
+    for (var i=1; i<=col_count; i++) {
+      tdTab[i] = g('tdTb'+i);
+  //    tdTab[i].style.width=Math.round(screen.width*0.65/col_count)+"px";
+    }
+    if( IE = d.all && !self.opera)  g('divTdPt1').style.display = 'none';
+  }
+
+  d.onmousedown = function(e) {
+    col_count = (document.getElementById('table_col_resize').rows[0].cells.length +1)/2;
+    tdTab = [];
+    for (var i=1; i<=col_count; i++) {
+      tdTab[i] = g('tdTb'+i);
+    }
+    if( IE = d.all && !self.opera)  g('divTdPt1').style.display = 'none';
+
+    var t;
+    if(( t = FF ? e.target : event.srcElement).className != "tdResize") return; //OTSECHKA LISHNEGO
+    mDown = t.id.charAt(8);
+    posX = ( FF ? e.pageX : event.x + d.body.scrollLeft) - tdTab[mDown].offsetWidth; //nachalnaya tochka zahvata
+    posTbl = ( FF ? e.pageX : event.x + d.body.scrollLeft) - g('tdResize' + mDown).offsetParent.offsetWidth;
+  }
+  d.onmousemove = function eMove(e) {
+    col_count = (document.getElementById('table_col_resize').rows[0].cells.length +1)/2;
+    if(!mDown) return;
+    old_mDownWidth =  tdTab[mDown].style.width;
+    new_mDownWidth = Math.max(minWidth, ( FF ? e.pageX : event.x + d.body.scrollLeft) - posX);
+    changeWidth = parseInt(new_mDownWidth) - parseInt(old_mDownWidth);
+  //  if  ((parseInt(tdTab[parseInt(mDown)+1].style.width)-changeWidth>minWidth)||(changeWidth<0)) {
+      tdTab[mDown].style.width=new_mDownWidth+"px";
+//      tdTab[parseInt(mDown)+1].style.width = (parseInt(tdTab[parseInt(mDown)+1].style.width)-changeWidth)+"px";
+      g('tdResize' + mDown).style.width = IE ? 4 : 1;
+  //  }
+    for (var i=1; i<=col_count; i++) {
+      if((g('lab_td_width'+i)!=null)&&(tdTab[i]!=null)){g('lab_td_width'+i).value = tdTab[i].style.width;}
+    }
+
+  }
+  d.onmouseup = function(e) {
+    mDown = 0;
+  }
+</script>
+
+

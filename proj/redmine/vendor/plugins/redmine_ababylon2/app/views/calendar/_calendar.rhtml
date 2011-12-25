@@ -1,0 +1,52 @@
+
+<%  hidden = hidden || false %>
+<%  time = time || false %>
+<%  clear_text = clear_text || "Empty" %>
+<%  input_name = input_name || "myDate" %>
+<%  field = field || nil %>
+<% clear_action = clear_action || 'zzz' %>
+
+<% if calendar_type=='ajax' %>
+  <% if time_obj %>
+    <%
+    month = time_obj.month.to_s
+    month = "0" + month if month.length <2
+    day = time_obj.day.to_s
+    day = "0" + day  if day.length <2
+    begin
+      hour = time_obj.hour.to_s
+      hour = "0" + hour  if hour.length <2
+      min = time_obj.min.to_s
+      min = "0" + min  if min.length <2
+    rescue
+      time_obj = DateTime.strptime(time_obj.year.to_s + month + day,"%Y%m%d")
+      hour = "00"
+      min = "00"
+    end
+  %>
+
+
+    <%  if !hidden %>
+      <%= day %>-<%= month %>-<%=time_obj.year.to_s%> <%=  hour + ":" +  min  if time %>
+    <%  end %>
+    <input name="<%=input_name%>"  value="<%=time_obj.year.to_s%>-<%= month %>-<%= day %> <%=time_obj.hour.to_s + ":" + time_obj.min.to_s  %>" onclick="" type="hidden" size="10">
+  <% else %>
+    <% if !hidden %>  <%= clear_text  %> <%  end %>
+    <input name="<%=input_name%>" value="<%=Time.now.year%>-<%=Time.now.month%>-<%=Time.now.day%> <%=Time.now.hour  %>:<%=Time.now.min %>" onclick="" type="hidden" size="10">
+  <% end %>
+  <input name="click_button" value="clear"  type="hidden">
+
+  <%  if !hidden %>
+    <input value="Изменить" onclick="document.<%= form_name %>.click_button.value='set';pickDate(this, document.<%= form_name %>, document.<%= form_name %>.elements['<%=input_name%>']);" type="button">
+    <%  if time_obj && clear_time %>
+     <!-- <input value="Очистить" onclick="document.<%= form_name %>.click_button.value='clear';document.<%= form_name %>.submit();" type="button"> -->
+      <input value="Очистить" onclick="<%=remote_function(:url=>{:action=> clear_action.to_sym, :field=>field} )%>;" type="button">
+    <% end %>
+  <% end  %>
+
+
+<% else %>
+  <input type="text" name="<%=input_name%>"  value=""  size="10" >
+  <input value="Изменить" onclick="pickDate(this, document.<%= form_name %>, document.<%= form_name %>.elements['<%=input_name%>']);" type="button">
+<% end %>
+

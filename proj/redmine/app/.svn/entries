@@ -1,0 +1,43 @@
+10
+
+dir
+8314
+http://redmine.rubyforge.org/svn/branches/1.2-stable/app
+http://redmine.rubyforge.org/svn
+
+
+
+2011-12-10T12:04:47.599564Z
+8158
+jplang
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+e93f8b46-1217-0410-a6f0-8f06a7374b81
+
+helpers
+dir
+
+models
+dir
+
+controllers
+dir
+
+sweepers
+dir
+
+views
+dir
+

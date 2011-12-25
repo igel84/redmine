@@ -1,0 +1,65 @@
+<%= error_messages_for 'member' %>
+<% members = @project.members.find(:all, :include => [:principal]).sort %>
+
+<p style="color:green">
+  <%= l(:project_settings_reload_message) %>
+</p>
+
+<% if !@project.default_product_manager_id.present? or !@project.default_project_manager_id.present? %>
+  <p style="color:red">
+    <%= l(:project_settings_setup_needed_message) %>
+  </p>
+<% end %>
+
+<div class="splitcontentleft">
+  <% if members.any? %>
+
+    <table class="list members">
+      <thead>
+        <tr>
+          <th><%= l(:label_user) %></th>
+          <th colspan="2"><%= l(:label_role_plural) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% members.each do |member| %>
+          <% next if member.new_record? %>
+          <tr id="r_member-<%= member.id %>" class="<%= cycle 'odd', 'even' %> member">
+            <td><%= link_to_user member.principal %></td>
+            <td>
+              <% if authorize_for('members', 'edit') %>
+                <% remote_form_for(:member, member, :url => {:controller => 'members', :action => 'edit', :id => member},
+                                                    :method => :post) do |f| %>
+                  <label>
+                    <%= radio_button_tag 'member[default_project_manager_id]', member.user.id, @project.default_project_manager_id == member.user.id,
+                          :class => 'member_default_project_manager_radio',
+                          :onclick => '$$(".member_default_project_manager_radio").each(function(e){e.setValue(false);});$(this).setValue(true);this.parentNode.parentNode.onsubmit.call(this.parentNode.parentNode);' %>
+                    <%= l(:default_project_manager) %>
+                  </label>
+                <% end %>
+
+              <% end %>
+            </td>
+            <td>
+              <% if authorize_for('members', 'edit') %>
+                <% remote_form_for(:member, member, :url => {:controller => 'members', :action => 'edit', :id => member},
+                                                    :method => :post) do |f| %>
+                  <label>
+                    <%= radio_button_tag 'member[default_product_manager_id]', member.user.id, @project.default_product_manager_id == member.user.id,
+                          :class => 'member_default_product_manager_radio',
+                          :onclick => '$$(".member_default_product_manager_radio").each(function(e){e.setValue(false);});$(this).setValue(true);$(this).setValue(true);this.parentNode.parentNode.onsubmit.call(this.parentNode.parentNode);' %>
+                    <%= l(:default_product_manager) %>
+                  </label>
+                <% end %>
+
+              <% end %>
+            </td>
+          </tr>
+        <% end; reset_cycle %>
+      </tbody>
+    </table>
+
+  <% else %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% end %>
+</div>
